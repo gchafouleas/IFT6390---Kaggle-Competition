@@ -1,11 +1,21 @@
 import numpy as np
 from preproces_data import PreprocessData
+from naive_bayes_classifier import NaiveBayesClassifer
 
-train_data = np.load("./data/data_train.pkl", allow_pickle=True)
-#train_data_array = np.asarray(train_data).transpose()
+data = np.load("./data/data_train.pkl", allow_pickle=True)
+data = np.asarray(data).transpose()
+np.random.shuffle(data)
+i_train = int(data.shape[0] * 0.7)
+i_test = int(data.shape[0] - data.shape[0] * 0.3)
+train_data = data[:i_train,:]
+print(train_data.shape)
+test_data = data[i_test:, :]
+print(test_data.shape)
 
 preprocess = PreprocessData(train_data)
-preprocess.generate_bag_of_words("train_data_bag", train_data)
-#preprocess.generate_vocabulary(train_data)
-#print(preprocess.train_data_bag[0,:])
-train_class_0 = preprocess.load_pickle_file('train_data_bag_class_0')
+vocab = preprocess.generate_vocabulary(train_data)
+print(len(vocab))
+naive_classifier = NaiveBayesClassifer(train_data, vocab)
+naive_classifier.train(train_data)
+accuracy = naive_classifier.test_accuracy(test_data)
+print(accuracy)
