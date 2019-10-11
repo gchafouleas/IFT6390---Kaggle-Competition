@@ -32,14 +32,15 @@ class NaiveBayesClassifer():
         print("started training")
         num_documents = data.shape[0]
         self.prob_classes = {}
+        self.num_words_class = {}
         self.priors = {}
         for i in range(len(self.labels)):
             index_class = np.where(data[:,-1] == self.labels[i])
             class_data = data[index_class[0], :-1]
             print("Generating bag train data for {}".format(self.labels[i]))
             bag_class, word_count = self.generate_bag_of_words(class_data)
-            prob_words = np.divide(bag_class + 1,word_count + len(self.vocab))
-            self.prob_classes[str(self.labels[i])] = list(prob_words)
+            self.num_words_class[str(self.labels[i])] = word_count
+            self.prob_classes[str(self.labels[i])] = list(bag_class)
             self.priors[str(self.labels[i])] = class_data.shape[0]/num_documents
             print("Done calculatin prob for class : {}".format(self.labels[i]))
 
@@ -48,14 +49,18 @@ class NaiveBayesClassifer():
         prediction = []
         for s in test:
             words = word_tokenize(s[0])
+            word_count = 0
             for i in range(len(self.labels)):
                 prob_words = 0
                 for word in words:
+                    word_count += 1
                     base_word = wordnet_lemmatizer.lemmatize(word.lower(), 'v')
+                    prob_word = np.log(1)
                     if base_word in self.vocab:
                         index = self.get_vocab_index(base_word)
-                        prob_words *= self.prob_classes[self.labels[i]][0][index]
-                prob_c[i] = prob_words* self.priors[self.labels[i]]
+                        prob_word = np.log(self.prob_classes[self.labels[i]][0][index] + 1)
+                    prob_words += prob_word
+                prob_c[i] = (prob_words - word_count*np.log(self.num_words_class[self.labels[i]] + len(self.vocab))) + np.log(self.priors[self.labels[i]])
             prediction.append(self.labels[np.argmax(np.asarray(prob_c))] == s[1])
 
         return np.sum(prediction)/test.shape[0]
