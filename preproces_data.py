@@ -10,21 +10,44 @@ wordnet_lemmatizer = WordNetLemmatizer()
 
 class PreprocessData:
     def __init__(self, train_data):
-        self.vocab = list(np.unique(np.asarray(self.load_pickle_file('vocab'))))
+        pass
 
     def generate_vocabulary(self, data):
         print("Generating vocabulary")
-        vocab = self.process_input(data[:,0])
-        vocab = self.lemmatize_words(vocab)
-        #self.save_pickle_file(vocab,'vocab')
-        return vocab
+        text = self.process_input(data[:,:-1])
+        print("preprocessed")
+        vocab = self.lemmatize_words(text)
+        print("lemma done")
+        self.save_pickle_file(vocab,'vocab')
         print("Vocabulary saved")
+        return vocab
 
+    def normalize_text(self, data, file_name, train=True):
+        normalize_text = data         
+        if train: 
+            data = data[:,:-1]
+        for i in range(data.shape[0]):
+            words = ""
+            if train:
+                sentence = data[i][0]
+            else:
+                sentence = data[i]
+            for word in word_tokenize(sentence):
+                base_word = wordnet_lemmatizer.lemmatize(word.lower(), 'v')
+                #if base_word in self.vocab or word in self.vocab:
+                words += " " + base_word
+            if train:
+                normalize_text[i,:-1] = words
+            else:
+                normalize_text[i] = words
+        #self.save_pickle_file(normalize_text, file_name)
+        return normalize_text
+                
     #SOURCE code from : https://gist.github.com/amnrzv/596ba910524e0b1b4e8fa2167fd773bf#file-a_language_analysis-py-L2
     def process_input(self, data):
         vocab = []
         for sentence in data:
-            words = word_tokenize(sentence)
+            words = word_tokenize(sentence[0])
             for tag in nltk.pos_tag(words):
                 # eliminating unnecessary POS tags
                 match = re.search('\w.*', tag[1])

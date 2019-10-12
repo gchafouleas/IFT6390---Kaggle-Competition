@@ -16,16 +16,15 @@ class NaiveBayesClassifer():
         bag = np.zeros((1, len(self.vocab)))
         word_count = 0
         for i in range(data.shape[0]):
-            #print("calculating {0}/{1}".format(i,data.shape[0]))
-            sentence = data[i,:][0]
-            for word in word_tokenize(sentence):
-                base_word = wordnet_lemmatizer.lemmatize(word.lower(), 'v')
+            print("calculating {0}/{1}".format(i,data.shape[0]))
+            sentence = data[i,:][0].split()
+            for word in sentence:
                 #if base_word in self.vocab or word in self.vocab:
-                index = self.get_vocab_index(base_word)
+                index = self.get_vocab_index(word)
                 if index != -1:
-                    print("update word")
                     bag[0,index] += 1
                     word_count += 1
+
         return bag, word_count
 
     def train(self, data):
@@ -35,6 +34,7 @@ class NaiveBayesClassifer():
         self.num_words_class = {}
         self.priors = {}
         for i in range(len(self.labels)):
+            print("Label {0}/{1}".format(i+1, len(self.labels)))
             index_class = np.where(data[:,-1] == self.labels[i])
             class_data = data[index_class[0], :-1]
             print("Generating bag train data for {}".format(self.labels[i]))
@@ -42,28 +42,28 @@ class NaiveBayesClassifer():
             self.num_words_class[str(self.labels[i])] = word_count
             self.prob_classes[str(self.labels[i])] = list(bag_class)
             self.priors[str(self.labels[i])] = class_data.shape[0]/num_documents
-            print("Done calculatin prob for class : {}".format(self.labels[i]))
+            print("Done calculating prob for class : {}".format(self.labels[i]))
 
     def test_accuracy(self, test):
         prob_c = np.zeros(len(self.labels))
         prediction = []
         for s in test:
-            words = word_tokenize(s[0])
             word_count = 0
+            words = s.split()
             for i in range(len(self.labels)):
+                print("Computing labels for test")
                 prob_words = 0
                 for word in words:
                     word_count += 1
-                    base_word = wordnet_lemmatizer.lemmatize(word.lower(), 'v')
                     prob_word = np.log(1)
-                    if base_word in self.vocab:
-                        index = self.get_vocab_index(base_word)
+                    if word in self.vocab:
+                        index = self.get_vocab_index(word)
                         prob_word = np.log(self.prob_classes[self.labels[i]][0][index] + 1)
                     prob_words += prob_word
-                prob_c[i] = (prob_words - word_count*np.log(self.num_words_class[self.labels[i]] + len(self.vocab))) + np.log(self.priors[self.labels[i]])
-            prediction.append(self.labels[np.argmax(np.asarray(prob_c))] == s[1])
+                #prob_c[i] = (prob_words - word_count*np.log(self.num_words_class[self.labels[i]] + len(self.vocab))) + np.log(self.priors[self.labels[i]])
+            #prediction.append(self.labels[np.argmax(np.asarray(prob_c))])
 
-        return np.sum(prediction)/test.shape[0]
+        return prediction
 
     def label_encoding(self, labels):
         self.train_hot_one_labels = {}
