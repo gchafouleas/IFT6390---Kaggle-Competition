@@ -3,6 +3,7 @@ import nltk
 import re
 from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
+import pickle as pkl
 
 wordnet_lemmatizer = WordNetLemmatizer()
 
@@ -43,13 +44,23 @@ class NaiveBayesClassifer():
             self.prob_classes[str(self.labels[i])] = list(bag_class)
             self.priors[str(self.labels[i])] = class_data.shape[0]/num_documents
             print("Done calculating prob for class : {}".format(self.labels[i]))
+        with open('prob_classes' + '.pkl', 'wb') as f:
+            pkl.dump(self.prob_classes, f)
+        with open('priors' + '.pkl', 'wb') as f:
+            pkl.dump(self.priors, f)
+        with open('num_words_class' + '.pkl', 'wb') as f:
+            pkl.dump(self.num_words_class, f)
 
     def test_accuracy(self, test):
         prob_c = np.zeros(len(self.labels))
         prediction = []
+        test_item = 0
+        total_test_item = len(test)
         for s in test:
+            test_item += 1
             word_count = 0
             words = s.split()
+            print("test exaple {0}/{1}".format(test_item,total_test_item))
             for i in range(len(self.labels)):
                 print("Computing labels for test")
                 prob_words = 0
@@ -60,8 +71,8 @@ class NaiveBayesClassifer():
                         index = self.get_vocab_index(word)
                         prob_word = np.log(self.prob_classes[self.labels[i]][0][index] + 1)
                     prob_words += prob_word
-                #prob_c[i] = (prob_words - word_count*np.log(self.num_words_class[self.labels[i]] + len(self.vocab))) + np.log(self.priors[self.labels[i]])
-            #prediction.append(self.labels[np.argmax(np.asarray(prob_c))])
+                prob_c[i] = (prob_words - word_count*np.log(self.num_words_class[self.labels[i]] + len(self.vocab))) + np.log(self.priors[self.labels[i]])
+            prediction.append(self.labels[np.argmax(np.asarray(prob_c))])
 
         return prediction
 
