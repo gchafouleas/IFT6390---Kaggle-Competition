@@ -9,7 +9,6 @@ wordnet_lemmatizer = WordNetLemmatizer()
 
 class NaiveBayesClassifer():
     def __init__(self, train_data, vocabulary):
-        self.train_inputs = train_data[:,:-1]
         self.labels = np.unique(train_data[:, -1])
         self.vocab = vocabulary
 
@@ -58,21 +57,24 @@ class NaiveBayesClassifer():
         total_test_item = len(test)
         for s in test:
             test_item += 1
-            word_count = 0
             words = s.split()
             print("test exaple {0}/{1}".format(test_item,total_test_item))
             for i in range(len(self.labels)):
-                print("Computing labels for test")
                 prob_words = 0
+                word_count = 0
                 for word in words:
                     word_count += 1
-                    prob_word = np.log(1)
+                    prob_word = 0
                     if word in self.vocab:
                         index = self.get_vocab_index(word)
-                        prob_word = np.log(self.prob_classes[self.labels[i]][0][index] + 1)
-                    prob_words += prob_word
-                prob_c[i] = (prob_words - word_count*np.log(self.num_words_class[self.labels[i]] + len(self.vocab))) + np.log(self.priors[self.labels[i]])
-            prediction.append(self.labels[np.argmax(np.asarray(prob_c))])
+                        prob_word = self.prob_classes[self.labels[i]][0][index]
+                    	
+                    prob = np.log(prob_word  + 1) - np.log(self.num_words_class[self.labels[i]] + len(self.vocab))
+                    prob_words += prob
+                prob_c[i] = prob_words*self.priors[self.labels[i]]
+            pred = self.labels[np.argmax(np.asarray(prob_c))]
+            print(pred)
+            prediction.append(pred)
 
         return prediction
 
@@ -86,3 +88,8 @@ class NaiveBayesClassifer():
             if self.vocab[i] == word:
                 return i
         return -1
+
+    def load_train_data(self):
+    	self.prob_classes = np.load("prob_classes.pkl", allow_pickle=True)
+    	self.priors = np.load("priors.pkl", allow_pickle=True)
+    	self.num_words_class = np.load("num_words_class.pkl", allow_pickle=True)

@@ -9,7 +9,7 @@ import pickle as pkl
 wordnet_lemmatizer = WordNetLemmatizer()
 
 class PreprocessData:
-    def __init__(self, train_data):
+    def __init__(self):
         pass
 
     def generate_vocabulary(self, data):
