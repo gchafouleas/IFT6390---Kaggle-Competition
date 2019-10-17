@@ -22,3 +22,5 @@ df = pd.read_csv('./data/sample_submission.csv', delimiter= ',')
 df['Category'] = predictions
 df.to_csv('./prediction.csv', index=False, sep=',')   
 print("saved prediction csv")
+
+# TEST GIT SUBMIT

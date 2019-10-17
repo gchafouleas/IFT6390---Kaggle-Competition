@@ -6,6 +6,9 @@ from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
 import pickle as pkl
 
+
+# TEST 2 GIT
+
 wordnet_lemmatizer = WordNetLemmatizer()
 
 class PreprocessData:
