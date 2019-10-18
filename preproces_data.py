@@ -1,15 +1,22 @@
 
 import numpy as np
 import nltk
-import re
 from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
 import pickle as pkl
+from nltk.corpus import stopwords
+
+
+# TEST 2 GIT
+
+
+# TEST 2 GIT
 
 
 # TEST 2 GIT
 
 wordnet_lemmatizer = WordNetLemmatizer()
+stop_words = set(stopwords.words('english'))
 
 class PreprocessData:
     def __init__(self):
@@ -17,9 +24,9 @@ class PreprocessData:
 
     def generate_vocabulary(self, data):
         print("Generating vocabulary")
-        text = self.process_input(data[:,:-1])
+        vocab = self.process_input(data[:,:-1])
         print("preprocessed")
-        vocab = self.lemmatize_words(text)
+        vocab = self.lemmatize_words(vocab)
         print("lemma done")
         self.save_pickle_file(vocab,'vocab')
         print("Vocabulary saved")
@@ -36,14 +43,13 @@ class PreprocessData:
             else:
                 sentence = data[i]
             for word in word_tokenize(sentence):
-                base_word = wordnet_lemmatizer.lemmatize(word.lower(), 'v')
-                #if base_word in self.vocab or word in self.vocab:
-                words += " " + base_word
+                word = wordnet_lemmatizer.lemmatize(word.lower(), 'v')
+                words += " " + word.lower()
             if train:
                 normalize_text[i,:-1] = words
             else:
                 normalize_text[i] = words
-        #self.save_pickle_file(normalize_text, file_name)
+
         return normalize_text
                 
     #SOURCE code from : https://gist.github.com/amnrzv/596ba910524e0b1b4e8fa2167fd773bf#file-a_language_analysis-py-L2
@@ -51,11 +57,9 @@ class PreprocessData:
         vocab = []
         for sentence in data:
             words = word_tokenize(sentence[0])
-            for tag in nltk.pos_tag(words):
-                # eliminating unnecessary POS tags
-                match = re.search('\w.*', tag[1])
-                if match:
-                    vocab.append(tag)
+            for tag in words:
+                if tag not in stop_words:
+                    vocab.append(tag.lower())
         return vocab
 
     #SOURCE code from : https://gist.github.com/amnrzv/596ba910524e0b1b4e8fa2167fd773bf#file-a_language_analysis-py-L2
@@ -66,9 +70,8 @@ class PreprocessData:
         """
         base_words = []
         for tag in pos_tagged_array:
-            base_word = wordnet_lemmatizer.lemmatize(tag[0].lower(), 'v')
-            if base_word not in base_words:
-                base_words.append(base_word)
+            base_word = wordnet_lemmatizer.lemmatize(tag.lower(), 'v')
+            base_words.append(base_word)
         return base_words      
 
     def save_pickle_file(self, vocab, filename):
