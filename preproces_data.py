@@ -59,7 +59,8 @@ class PreprocessData:
             words = word_tokenize(sentence[0])
             for tag in words:
                 if tag not in stop_words:
-                    vocab.append(tag.lower())
+                    if tag not in vocab:
+                        vocab.append(tag.lower())
         return vocab
 
     #SOURCE code from : https://gist.github.com/amnrzv/596ba910524e0b1b4e8fa2167fd773bf#file-a_language_analysis-py-L2

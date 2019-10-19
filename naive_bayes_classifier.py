@@ -63,12 +63,12 @@ class NaiveBayesClassifer():
                 oov = 0
                 for word in words:
                     word_count += 1
-                    if word in self.prob_classes[i].keys():
+                    if word not in self.prob_classes[i].keys():
                     	oov += 1
                     prob_word = self.prob_classes[i].get(word,0)
                     prob = np.log(prob_word  + alpha)
                     prob_words += prob
-                prob_words -= word_count*np.log(self.num_words_class[self.labels[i]] + alpha*(len(self.vocab)))
+                prob_words -= word_count*np.log(self.num_words_class[self.labels[i]] + alpha*(len(self.vocab)+ oov))
                 prob_c[i] = prob_words + np.log(self.priors[self.labels[i]])
             pred = self.labels[np.argmax(np.asarray(prob_c))]
             prediction.append(pred)
