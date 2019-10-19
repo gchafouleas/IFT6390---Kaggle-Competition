@@ -35,7 +35,7 @@ validation_data = preprocess.normalize_text(validation_data, 'validation_data_no
 test_data = preprocess.normalize_text(test_data, 'test_data_normalized', train=False)
 naive_classifier = NaiveBayesClassifer(train_data_test, vocab)
 naive_classifier.train(train_data_test)
-alphas = np.linspace(0.086,.094, 20)
+alphas = np.linspace(0.86,.094, 20)  # Best alpha submit 55.211% 0.09063157894736842
 accuracies = []
 for alpha in alphas:
 	preds = naive_classifier.test_accuracy(validation_data[:,:-1], True, alpha)
