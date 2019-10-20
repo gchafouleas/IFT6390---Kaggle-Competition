@@ -43,8 +43,9 @@ class PreprocessData:
             else:
                 sentence = data[i]
             for word in word_tokenize(sentence):
-                word = wordnet_lemmatizer.lemmatize(word.lower(), 'v')
-                words += " " + word.lower()
+                if word not in stop_words:
+                    word = wordnet_lemmatizer.lemmatize(word.lower(), 'v')
+                    words += " " + word.lower()
             if train:
                 normalize_text[i,:-1] = words
             else:

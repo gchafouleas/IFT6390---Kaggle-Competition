@@ -38,12 +38,6 @@ class NaiveBayesClassifer():
             self.prob_classes.append(bag_class)
             self.priors[str(self.labels[i])] = class_data.shape[0]/num_documents
             print("Done calculating prob for class : {}".format(self.labels[i]))
-        with open('prob_classes' + '.pkl', 'wb') as f:
-            pkl.dump(self.prob_classes, f)
-        with open('priors' + '.pkl', 'wb') as f:
-            pkl.dump(self.priors, f)
-        with open('num_words_class' + '.pkl', 'wb') as f:
-            pkl.dump(self.num_words_class, f)
 
     def test_accuracy(self, test, validation = False, alpha = 1):
         prob_c = np.zeros(len(self.labels))
