@@ -18,4 +18,4 @@ To run the Naive bayes classifier you simply have to run:
 ```
 python main.py
 ```
-It is configured to run spliting the train into a train an valid set and tuning on a range of alpha values for the hyperparamters. Picking the best alpha and training again on the whole train set then evaluation the test set with the best tuned alpha. 
+It is configured to run spliting the train into a train an valid set and tuning on a range of alpha values for the hyperparamters. Picking the best alpha and test set with the best tuned alpha. 
