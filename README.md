@@ -1,11 +1,11 @@
 # Kaggle Naive bayes with smoothing 
 This is the repository for the Kaggle competition code for IFT6390
-##Installation
+## Installation
 Before running the program you must first install all the requirements using the requirements.txt file. 
 ```
 pip install -r requirement.txt
 ```
-#Note:
+### Note:
 We use the nltk library and aditional installation are required in order for the program to run. 
 You will need to manually install some dependences from nltk by running your python interpreter as an example:
 ```
@@ -13,7 +13,7 @@ import nltk
 nltk.download('punkt')
 ```
 
-##Running
+## Running
 To run the Naive bayes classifier you simply have to run: 
 ```
 python main.py
