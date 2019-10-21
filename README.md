@@ -18,4 +18,11 @@ To run the Naive bayes classifier you simply have to run:
 ```
 python main.py
 ```
+
+The main.py contains the code to train and test the Naive bayes with the loaded data. 
+
+The naive_bayes_classifier.py is the class containing the code of the naive_bayes_classifier. 
+
+The preproces_data.py is the class containing the preprocessing done to generate the vocabulary and normalize the data. 
+
 It is configured to run spliting the train into a train an valid set and tuning on a range of alpha values for the hyperparamters. Picking the best alpha and test set with the best tuned alpha. 
