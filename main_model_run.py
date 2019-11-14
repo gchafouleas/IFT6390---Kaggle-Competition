@@ -42,24 +42,10 @@ def save_model(file_name, model):
     with open(file_name, 'wb') as fin:
         pickle.dump(model, fin)
 
-def svc_param_selection(X, y, nfolds):
-    Cs = np.linspace(0.001, 10, num=20)
-    param_grid = {'C': Cs}
-    grid_search = GridSearchCV(svm.LinearSVC(penalty='l2'), param_grid, cv=nfolds, verbose=4)
-    grid_search.fit(X, y)
-    return grid_search
-
 def ridgide_param_selection(X, y, nfolds):
     alphas = np.linspace(0.01, 10, num=20)
     param_grid = {'alpha': alphas}
     grid_search = GridSearchCV(RidgeClassifier(solver='sag'), param_grid, cv=nfolds, verbose=4)
-    grid_search.fit(X, y)
-    return grid_search
-
-def LR_param_selection(X, y, nfolds):
-    Cs = np.linspace(3, 10, num=10)
-    param_grid = {'C': Cs}
-    grid_search = GridSearchCV(LogisticRegression(solver='newton-cg', multi_class='multinomial'), param_grid, cv=nfolds, verbose=4)
     grid_search.fit(X, y)
     return grid_search
 
@@ -69,8 +55,8 @@ def NB_param_selection(X, y, nfolds):
     grid_search = GridSearchCV(naive_bayes.ComplementNB(), param_grid, cv=nfolds, verbose=4)
     grid_search.fit(X, y)
     return grid_search
+
 rs = np.random.seed(500)
-is_csv = True
 split_data = True
 train = np.load("./data/data_train.pkl", allow_pickle=True)
 train = np.asarray(train).transpose()
